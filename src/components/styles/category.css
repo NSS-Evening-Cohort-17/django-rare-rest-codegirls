@@ -1,0 +1,12 @@
+.card {
+    display: flex;
+    max-width: 200px;
+    flex-wrap: nwrap;
+    padding-top: 10px;
+    padding-bottom: 10px;  
+    display:block;
+  
+    border: 1px solid #eee;
+    border-radius: 12px;
+    
+  }
