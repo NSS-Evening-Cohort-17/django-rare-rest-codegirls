@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { useHistory } from "react-router-dom"
 import { registerUser } from "./AuthManager"
 
+
 export const Register = ({setToken}) => {
   const firstName = useRef()
   const lastName = useRef()
@@ -12,7 +13,24 @@ export const Register = ({setToken}) => {
   const password = useRef()
   const verifyPassword = useRef()
   const passwordDialog = useRef()
+  const image_url = useRef()
   const history = useHistory()
+  
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1;
+  var yyyy = today.getFullYear();
+  if(dd<10)
+  {
+    dd='0'+dd;
+  
+  }
+  if (mm<10)
+  {
+    mm='0'+mm;
+  }
+  today = yyyy+ '-'+mm+'-'+dd;
+
 
   const handleRegister = (e) => {
     e.preventDefault()
@@ -24,7 +42,10 @@ export const Register = ({setToken}) => {
         last_name: lastName.current.value,
         email: email.current.value,
         password: password.current.value,
-        bio: bio.current.value
+        bio: bio.current.value,
+        image_url: image_url.current.value,
+        created_on: today,
+        active:1
       }
 
       registerUser(newUser)
@@ -93,6 +114,13 @@ export const Register = ({setToken}) => {
           <label className="label">Bio</label>
           <div className="control">
             <textarea className="textarea" placeholder="Tell us about yourself..." ref={bio}></textarea>
+          </div>
+        </div>
+
+        <div className="field">
+          <label className="label">Profile Pic Url</label>
+          <div className="control">
+            <input type="text" placeholder="Profile Picture URL" ref={image_url}></input>
           </div>
         </div>
 
