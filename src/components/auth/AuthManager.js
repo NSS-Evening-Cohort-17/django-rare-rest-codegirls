@@ -22,3 +22,4 @@ export const registerUser = (newUser) => {
     body: JSON.stringify(newUser)
   }).then(res => res.json())
 }
+
