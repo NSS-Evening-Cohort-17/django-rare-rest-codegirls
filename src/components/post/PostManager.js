@@ -1,3 +1,5 @@
+const remoteURL = "http://localhost:8000"
+
 export const getPosts = () => {
     return fetch("http://localhost:8000/posts", {
         headers:{
@@ -18,13 +20,36 @@ export const createNewPost = (newPost) => {
     }).then(response => response.json())
 }
 
-export const updatePost = (editedPost) => {
-    return fetch(`http://localhost:8000/posts/${editedPost.id}`, {
+export const updatePost = (post) => {
+    console.log("updatepost",post)
+    return fetch(`${remoteURL}/posts/${post.id}`, {
         method: "PUT",
-        headers:{
-            "Authorization": `Token ${localStorage.getItem("token")}`,
+        headers: {
+            "Authorization": `Token ${localStorage.getItem("lu_token")}`,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(editedPost)
-    }).then(data => data.jsonO());
+        body: JSON.stringify(post)
+     })
+        .then(getPosts)
+}
+
+export const deletePost = (id) => {
+    console.log(id)
+    return fetch(`${remoteURL}/posts/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Token ${localStorage.getItem("lu_token")}`
+        }
+     })
+        .then(getPosts)
+        
+}
+
+export const getPostById = (id) => {
+    return fetch(`${remoteURL}/posts/${id}`, {
+        headers:{
+            "Authorization": `Token ${localStorage.getItem("lu_token")}`
+        }
+    })
+        .then(response => response.json())
 }
