@@ -1,4 +1,3 @@
-
 const remoteURL = "http://localhost:8000";
 
 export const getUserByName = (userName) => {
@@ -8,4 +7,3 @@ export const getUserByName = (userName) => {
 
 export const getAllUsers = () => {
   return fetch(`${remoteURL}/users`).then((res) => res.json());
-};
