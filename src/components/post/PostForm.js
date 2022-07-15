@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from "react";
-import { useHistory } from "react-router-dom";
-import { createNewPost } from "./PostManager";
+import { useHistory, useParams } from "react-router-dom";
+import { createNewPost, getPostById, updatePost } from "./PostManager";
 import { getCategory } from "../category/CategoryManager";
 
 
@@ -8,35 +8,46 @@ import { getCategory } from "../category/CategoryManager";
 export const PostForm = () => {
     const history = useHistory()
     const [categories, setCategories] = useState([])
+    const { id } = useParams()
+    const editMode = id ? true : false
+
     var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1;
-    var yyyy = today.getFullYear();
-    if(dd<10)
-    {
-      dd='0'+dd;
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
     
-    }
-    if (mm<10)
-    {
-      mm='0'+mm;
-    }
-    today = yyyy+ '-'+mm+'-'+dd;
+    today = `${yyyy}-${mm}-${dd}`;
+    //     user : localStorage.getItem("lu_token"),
 
     const [currentPost, setCurrentPost] = useState({
-        user : 1,
-        category: 1,
+        category: "",
         title: "",
         publication_date: today,
         image_url: "",
         content: "",
-        approved: "", 
-        tags:""
-
+        approved: "1"
         
     })
 
     useEffect(() => {
+        if (editMode) {
+            let isMounted = true;
+            getPostById(id).then((res) => {
+                if (isMounted) {
+                    setCurrentPost({
+                        category: res.category.id,
+                        title: res.title,
+                        publication_date: res.publication_date,
+                        image_url: res.image_url,
+                        content: res.content,
+                        approved: res.approved
+                    })
+                    console.log(currentPost)
+                }
+                
+            })
+        
+        }
         getCategory().then(setCategories)
     }, [])
 
@@ -101,20 +112,23 @@ export const PostForm = () => {
                    
 
                     const post = {
-                        user: 1,
                         title: currentPost.title,
                         category: parseInt(currentPost.category),
                         image_url: currentPost.image_url,
                         content: currentPost.content,
-                        tags:[1,2,3],
-                        approved:"1",
+                        approved:currentPost.approved,
                         publication_date: currentPost.publication_date
                     }
-                    console.log(post)
-                    createNewPost(post)
-                        .then(() => history.push("/posts"))
+
+                    {editMode ?
+                        (updatePost({...post, id})
+                        .then(() => history.push("/posts"))):
+                        (createNewPost(post)
+                        .then(() => history.push("/posts")))
+                    }
+                    
                 }}
-                className="btn btn-primary">Publish</button>
+                className="btn btn-primary">{editMode ? "Update" : "Add a new post"}</button>
         </form>
     )
 }
