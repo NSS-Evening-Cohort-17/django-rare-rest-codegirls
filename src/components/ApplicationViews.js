@@ -18,6 +18,7 @@ export const ApplicationViews = () => {
 
       <Route exact path="/posts"><PostList /></Route>
       <Route exact path="/posts/new"><PostForm /></Route>
+      <Route exact path="/postedit/:id"><PostForm/></Route>
     </>
   )
 }
