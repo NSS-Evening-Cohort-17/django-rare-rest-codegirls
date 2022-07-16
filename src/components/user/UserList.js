@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { getAllUsers, getUserByName } from "../../components/user/UserManager";
+import React, { useEffect, useState } from "react";
+import { getAllUsers} from "../../components/user/UserManager";
+import { UserCard } from "./UserCard";
 
 export const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -18,7 +19,7 @@ export const UserList = () => {
   return (
     <div className="container-cards">
       {users.map((user) => (
-        <UserCard key={user.name} user={user} />
+        <UserCard key={user.user} user={user.first_name} />
       ))}
     </div>
   );
