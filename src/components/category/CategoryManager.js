@@ -3,7 +3,7 @@ const remoteURL = "http://localhost:8000";
 export const getCategory = () => {
   return fetch(`${remoteURL}/categories`, {
     headers: {
-      Authorization: `Token ${localStorage.getItem("lu_token")}`,
+      Authorization: `Token ${localStorage.getItem("token")}`,
     },
   }).then((response) => response.json());
 };
@@ -11,7 +11,7 @@ export const getCategory = () => {
 export const getCategoryById = (id) => {
   return fetch(`${remoteURL}/categories/${id}`, {
     headers: {
-      Authorization: `Token ${localStorage.getItem("lu_token")}`,
+      Authorization: `Token ${localStorage.getItem("token")}`,
     },
   }).then((response) => response.json());
 };
@@ -21,7 +21,7 @@ export const deleteCategory = (id) => {
   return fetch(`${remoteURL}/categories/${id}`, {
     method: "DELETE",
     headers: {
-      Authorization: `Token ${localStorage.getItem("lu_token")}`,
+      Authorization: `Token ${localStorage.getItem("token")}`,
     },
   }).then(getCategory);
 };
@@ -30,7 +30,7 @@ export const createCategory = (newcategory) => {
   return fetch("http://localhost:8000/categories", {
     method: "POST",
     headers: {
-      Authorization: `Token ${localStorage.getItem("lu_token")}`,
+      Authorization: `Token ${localStorage.getItem("token")}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newcategory),

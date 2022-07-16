@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 // import './AnimalDetail.css';
 // import { useParams, useNavigate } from "react-router-dom";
 import { getUserByName } from "./UserManager";
-import { useHistory } from "react-router-dom";
 
 export const UserDetail = () => {
   const [user, setUser] = useState({
