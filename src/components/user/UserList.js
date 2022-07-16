@@ -16,10 +16,12 @@ export const UserList = () => {
   }, []);
 
   return (
-    <div className="container-cards">
-      {users.map((user) => (
-        <UserCard key={user.name} user={user} />
-      ))}
-    </div>
+    <section className="user">
+      <h3 className="username">{user.username}</h3>
+      <div className="first_name">{user.first_name}</div>
+      {/* What's up with the question mark???? See below.*/}
+      <div className="last_name">{user.last_name}</div>
+      <div className="email">{user.email}</div>
+    </section>
   );
 };

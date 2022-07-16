@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 // import { getUserById } from '../../modules/AnimalManager';
 // import './AnimalDetail.css';
 // import { useParams, useNavigate } from "react-router-dom";
 import { getUserByName } from "./UserManager";
+import { useHistory } from "react-router-dom";
 
 export const UserDetail = () => {
   const [user, setUser] = useState({
@@ -11,6 +13,7 @@ export const UserDetail = () => {
     last_name: "",
     email: "",
   });
+  const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
 
   const { userId } = useParams();

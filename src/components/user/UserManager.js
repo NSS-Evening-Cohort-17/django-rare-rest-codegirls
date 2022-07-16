@@ -7,3 +7,4 @@ export const getUserByName = (userName) => {
 
 export const getAllUsers = () => {
   return fetch(`${remoteURL}/users`).then((res) => res.json());
+};
