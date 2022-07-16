@@ -19,9 +19,7 @@ export const UserList = () => {
   return (
     <div className="container-cards">
       {users.map((user) => (
-
         <UserCard key={user.user} user={user.first_name} />
-
       ))}
     </div>
   );

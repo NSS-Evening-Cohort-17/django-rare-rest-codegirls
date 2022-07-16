@@ -6,7 +6,6 @@ export const getUserByName = (userName) => {
   return fetch(`${remoteURL}/users/${userName}`).then((res) => res.json());
 };
 
-
 export const getAllUsers = () => {
   return fetch(`${remoteURL}/users`, {
       headers:{
@@ -15,3 +14,4 @@ export const getAllUsers = () => {
   })
       .then(response => response.json())
 }
+
