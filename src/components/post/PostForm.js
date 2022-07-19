@@ -2,12 +2,16 @@ import React, { useState, useEffect} from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { createNewPost, getPostById, updatePost } from "./PostManager";
 import { getCategory } from "../category/CategoryManager";
+import { getTags } from "../tags/TagManager";
+
 
 
 
 export const PostForm = () => {
     const history = useHistory()
     const [categories, setCategories] = useState([])
+    const [checkedTags, setCheckedTags] = useState([])
+    const [ tags, setTags ] = useState([])
     const { id } = useParams()
     const editMode = id ? true : false
 
@@ -25,14 +29,39 @@ export const PostForm = () => {
         publication_date: today,
         image_url: "",
         content: "",
-        approved: "1"
+        approved: "1",
+        tags: []
         
     })
 
+    // useEffect(() => {
+    //     getCategory().then(setCategories)
+    //     getTags().then(setTags)
+    //     if (editMode) {
+    //         let isMounted = true;
+    //         getPostById(id).then((res) => {
+    //             console.log('currentres',res)
+    //             if (isMounted) {
+    //                 setCurrentPost(res)
+    //                 const postTags = res.tags.map(tag => parseInt(tag.id))
+    //                 console.log('currentPost',postTags)
+    //                 setCheckedTags(postTags)
+
+    //             }                
+    //         })        
+    //     }
+        
+    // }, [])
+
     useEffect(() => {
+        getCategory().then(setCategories)
+        getTags().then(setTags)
+        console.log(tags)
+        console.log(categories)
         if (editMode) {
             let isMounted = true;
             getPostById(id).then((res) => {
+
                 if (isMounted) {
                     setCurrentPost({
                         category: res.category.id,
@@ -40,31 +69,43 @@ export const PostForm = () => {
                         publication_date: res.publication_date,
                         image_url: res.image_url,
                         content: res.content,
-                        approved: res.approved
+                        approved: res.approved,
+                        tags:res.tags
                     })
-                    console.log(currentPost)
-                }
-                
-            })
-        
+                    const postTags = res.tags.map(tag => parseInt(tag.id))
+                    setCheckedTags(postTags)
+                    console.log('currentPost',currentPost)
+                }                
+            })        
         }
-        getCategory().then(setCategories)
+        
     }, [])
 
     useEffect(() => {
-        
-    } )
+        const changedPost = { ...currentPost }
+        changedPost.tags = checkedTags
+        setCurrentPost(changedPost)
+    }, [checkedTags])
 
-    const changePostState = (domEvent) => {
+    const changePostState = (e) => {
         const newPost = { ...currentPost}
-        let selectedVal = domEvent.target.value
+        if (e.target.name.includes("tag")) {
+            const currentTags = [...checkedTags]
+            if (e.target.checked) {
+                currentTags.push(parseInt(e.target.value))
+            } else {
+                const index = currentTags.indexOf(parseInt(e.target.value))
+                currentTags.splice(index, 1)
+            }
 
-        if (domEvent.target.name.includes("Id")){
-            selectedVal = parseInt(selectedVal)
+            setCheckedTags(currentTags)
         }
 
-        newPost[domEvent.target.name] = selectedVal
-
+        let selectedVal = e.target.value
+        if (e.target.name.includes("Id")){
+            selectedVal = parseInt(selectedVal)
+        }
+        newPost[e.target.name] = selectedVal
         setCurrentPost(newPost)
     }
 
@@ -105,6 +146,24 @@ export const PostForm = () => {
                         />
                 </div>
             </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <h3> Tags:</h3>
+                    {
+                        tags.map(c => {
+                            return <div key={c.id} className="tagCheckbox">
+                                <input type="checkbox"
+                                    name={`tag ${c.id}`}
+                                    value={c.id}
+                                    checked={checkedTags.includes(c.id)}
+                                    onChange={changePostState}
+                                ></input>
+                                <label htmlFor={c.id}> {c.label}</label>
+                            </div>
+                        })
+                    }
+                </div>
+            </fieldset>
 
             <button type="submit"
                 onClick={evt => {
@@ -117,7 +176,8 @@ export const PostForm = () => {
                         image_url: currentPost.image_url,
                         content: currentPost.content,
                         approved:currentPost.approved,
-                        publication_date: currentPost.publication_date
+                        publication_date: currentPost.publication_date,
+                        tags: [...checkedTags]
                     }
 
                     {editMode ?

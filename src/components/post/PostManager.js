@@ -10,6 +10,7 @@ export const getPosts = () => {
 }
 
 export const createNewPost = (newPost) => {
+    console.log("new post test",[newPost])
     return fetch("http://localhost:8000/posts", {
         method: "POST",
         headers:{
@@ -21,7 +22,7 @@ export const createNewPost = (newPost) => {
 }
 
 export const updatePost = (post) => {
-    console.log("updatepost",post)
+    console.log("updatepost",{post})
     return fetch(`${remoteURL}/posts/${post.id}`, {
         method: "PUT",
         headers: {
