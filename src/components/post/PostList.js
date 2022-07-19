@@ -32,8 +32,8 @@ export const PostList = () => {
                         <div className="post_date">{post.publication_date}</div>
                         <img className="post_image" src={post.image_url}></img>
                         <div className="post_content">{post.content}</div>
-                        <div className="post_category">{post.category}</div>
-                        <div className="post_user">{post.user}</div>
+                        <div className="post_category">{post.category.id}</div>
+                        <div className="post_user">{post.user.id}</div>
                         <Link to={`/postedit/${post.id}`} > Edit</Link>
                             <button type="button"  onClick={() => handleMethod('delete',post.id)} > Delete</button>
                     </section>
