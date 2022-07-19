@@ -10,7 +10,7 @@ import { getTags } from "../tags/TagManager";
 export const PostForm = () => {
     const history = useHistory()
     const [categories, setCategories] = useState([])
-    const [checkedTags, setCheckedCTags] = useState([])
+    const [checkedTags, setCheckedTags] = useState([])
     const [ tags, setTags ] = useState([])
     const { id } = useParams()
     const editMode = id ? true : false
@@ -34,6 +34,25 @@ export const PostForm = () => {
         
     })
 
+    // useEffect(() => {
+    //     getCategory().then(setCategories)
+    //     getTags().then(setTags)
+    //     if (editMode) {
+    //         let isMounted = true;
+    //         getPostById(id).then((res) => {
+    //             console.log('currentres',res)
+    //             if (isMounted) {
+    //                 setCurrentPost(res)
+    //                 const postTags = res.tags.map(tag => parseInt(tag.id))
+    //                 console.log('currentPost',postTags)
+    //                 setCheckedTags(postTags)
+
+    //             }                
+    //         })        
+    //     }
+        
+    // }, [])
+
     useEffect(() => {
         getCategory().then(setCategories)
         getTags().then(setTags)
@@ -42,6 +61,7 @@ export const PostForm = () => {
         if (editMode) {
             let isMounted = true;
             getPostById(id).then((res) => {
+
                 if (isMounted) {
                     setCurrentPost({
                         category: res.category.id,
@@ -50,11 +70,11 @@ export const PostForm = () => {
                         image_url: res.image_url,
                         content: res.content,
                         approved: res.approved,
-                        tags:res.tag
+                        tags:res.tags
                     })
-                    const postTags = currentPost.tags.map(tag => parseInt(tag.id))
+                    const postTags = res.tags.map(tag => parseInt(tag.id))
                     setCheckedTags(postTags)
-                    console.log(currentPost)
+                    console.log('currentPost',currentPost)
                 }                
             })        
         }
@@ -78,7 +98,7 @@ export const PostForm = () => {
                 currentTags.splice(index, 1)
             }
 
-            setCheckedCTags(currentTags)
+            setCheckedTags(currentTags)
         }
 
         let selectedVal = e.target.value
