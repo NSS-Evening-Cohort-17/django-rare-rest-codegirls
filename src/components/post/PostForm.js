@@ -1,59 +1,91 @@
 import React, { useState, useEffect} from "react";
-import { useHistory } from "react-router-dom";
-import { createNewPost } from "./PostManager";
+import { useHistory, useParams } from "react-router-dom";
+import { createNewPost, getPostById, updatePost } from "./PostManager";
 import { getCategory } from "../category/CategoryManager";
+import { getTags } from "../tags/TagManager";
+
 
 
 
 export const PostForm = () => {
     const history = useHistory()
     const [categories, setCategories] = useState([])
+    const [checkedTags, setCheckedCTags] = useState([])
+    const [ tags, setTags ] = useState([])
+    const { id } = useParams()
+    const editMode = id ? true : false
+
     var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1;
-    var yyyy = today.getFullYear();
-    if(dd<10)
-    {
-      dd='0'+dd;
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
     
-    }
-    if (mm<10)
-    {
-      mm='0'+mm;
-    }
-    today = yyyy+ '-'+mm+'-'+dd;
+    today = `${yyyy}-${mm}-${dd}`;
+    //     user : localStorage.getItem("lu_token"),
 
     const [currentPost, setCurrentPost] = useState({
-        user : 1,
-        category: 1,
+        category: "",
         title: "",
         publication_date: today,
         image_url: "",
         content: "",
-        approved: "", 
-        tags:""
-
+        approved: "1",
+        tags: []
         
     })
 
     useEffect(() => {
         getCategory().then(setCategories)
+        getTags().then(setTags)
+        console.log(tags)
+        console.log(categories)
+        if (editMode) {
+            let isMounted = true;
+            getPostById(id).then((res) => {
+                if (isMounted) {
+                    setCurrentPost({
+                        category: res.category.id,
+                        title: res.title,
+                        publication_date: res.publication_date,
+                        image_url: res.image_url,
+                        content: res.content,
+                        approved: res.approved,
+                        tags:res.tag
+                    })
+                    const postTags = currentPost.tags.map(tag => parseInt(tag.id))
+                    setCheckedTags(postTags)
+                    console.log(currentPost)
+                }                
+            })        
+        }
+        
     }, [])
 
     useEffect(() => {
-        
-    } )
+        const changedPost = { ...currentPost }
+        changedPost.tags = checkedTags
+        setCurrentPost(changedPost)
+    }, [checkedTags])
 
-    const changePostState = (domEvent) => {
+    const changePostState = (e) => {
         const newPost = { ...currentPost}
-        let selectedVal = domEvent.target.value
+        if (e.target.name.includes("tag")) {
+            const currentTags = [...checkedTags]
+            if (e.target.checked) {
+                currentTags.push(parseInt(e.target.value))
+            } else {
+                const index = currentTags.indexOf(parseInt(e.target.value))
+                currentTags.splice(index, 1)
+            }
 
-        if (domEvent.target.name.includes("Id")){
-            selectedVal = parseInt(selectedVal)
+            setCheckedCTags(currentTags)
         }
 
-        newPost[domEvent.target.name] = selectedVal
-
+        let selectedVal = e.target.value
+        if (e.target.name.includes("Id")){
+            selectedVal = parseInt(selectedVal)
+        }
+        newPost[e.target.name] = selectedVal
         setCurrentPost(newPost)
     }
 
@@ -94,6 +126,24 @@ export const PostForm = () => {
                         />
                 </div>
             </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <h3> Tags:</h3>
+                    {
+                        tags.map(c => {
+                            return <div key={c.id} className="tagCheckbox">
+                                <input type="checkbox"
+                                    name={`tag ${c.id}`}
+                                    value={c.id}
+                                    checked={checkedTags.includes(c.id)}
+                                    onChange={changePostState}
+                                ></input>
+                                <label htmlFor={c.id}> {c.label}</label>
+                            </div>
+                        })
+                    }
+                </div>
+            </fieldset>
 
             <button type="submit"
                 onClick={evt => {
@@ -101,20 +151,24 @@ export const PostForm = () => {
                    
 
                     const post = {
-                        user: 1,
                         title: currentPost.title,
                         category: parseInt(currentPost.category),
                         image_url: currentPost.image_url,
                         content: currentPost.content,
-                        tags:[1,2,3],
-                        approved:"1",
-                        publication_date: currentPost.publication_date
+                        approved:currentPost.approved,
+                        publication_date: currentPost.publication_date,
+                        tags: [...checkedTags]
                     }
-                    console.log(post)
-                    createNewPost(post)
-                        .then(() => history.push("/posts"))
+
+                    {editMode ?
+                        (updatePost({...post, id})
+                        .then(() => history.push("/posts"))):
+                        (createNewPost(post)
+                        .then(() => history.push("/posts")))
+                    }
+                    
                 }}
-                className="btn btn-primary">Publish</button>
+                className="btn btn-primary">{editMode ? "Update" : "Add a new post"}</button>
         </form>
     )
 }

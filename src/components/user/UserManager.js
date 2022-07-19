@@ -7,5 +7,11 @@ export const getUserByName = (userName) => {
 };
 
 export const getAllUsers = () => {
-  return fetch(`${remoteURL}/users`).then((res) => res.json());
-};
+  return fetch(`${remoteURL}/users`, {
+      headers:{
+          "Authorization": `Token ${localStorage.getItem("lu_token")}`
+      }
+  })
+      .then(response => response.json())
+}
+
